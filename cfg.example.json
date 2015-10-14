@@ -1,0 +1,12 @@
+{
+    "database": {
+        "host": "yourDbHost",
+        "port": "yourDbPort",
+        "account": "yourDbAccount",
+        "password": "yourDbPassword",
+        "db": "yourDbDatabaseName",
+        "table": "yourDbTable"
+
+    },
+    "redirectUrl": "UrlOfRedirectedLoginPage"
+}
