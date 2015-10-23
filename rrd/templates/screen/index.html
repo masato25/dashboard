@@ -1,6 +1,15 @@
 {% extends "screen/base.html" %}
 
+{% block navcontainer %}
+<div style="float:right; margin-right:30px; font-size:0px">
+    <ul>
+        <li> {{screen_layout.screen_main_menu(None, top_screens)}} </li>
+    </ul>
+</div>
+{%endblock%}
+
 {% block container %}
+<!--
 <div class="row">
     <a href="#container"></a>
     <div class="col-md-12" style="padding-left:0px;">
@@ -9,4 +18,5 @@
         </ul>
     </div>
 </div>
+--!>
 {%endblock%}
