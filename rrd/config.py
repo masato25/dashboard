@@ -1,5 +1,6 @@
 #-*-coding:utf8-*-
 import os
+import json
 
 #-- dashboard db config --
 DASHBOARD_DB_HOST = "127.0.0.1"
@@ -27,6 +28,13 @@ QUERY_ADDR = "http://127.0.0.1:9966"
 
 BASE_DIR = "/home/work/open-falcon/dashboard/"
 LOG_PATH = os.path.join(BASE_DIR,"log/")
+
+
+JSONCFG = None
+path = os.path.dirname(os.path.realpath(__file__))
+configPath = path.replace('/rrd', '/cfg.json')
+with open(configPath) as config_file:
+	JSONCFG = json.load(config_file)
 
 try:
     from rrd.local_config import *

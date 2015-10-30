@@ -19,7 +19,7 @@ def dash_screens():
     top_screens = DashboardScreen.gets(pid='0')
     top_screens = sorted(top_screens, key=lambda x:x.name)
 
-    return render_template("screen/index.html", **locals())
+    return render_template("screen/index.html", config=config, **locals())
 
 @app.route("/screen/<int:sid>/delete")
 def dash_screen_delete(sid):
@@ -41,7 +41,7 @@ def dash_screen_edit(sid):
         screen.update(name=screen_name)
         return redirect("/screen/%s" %screen.id)
     else:
-        return render_template("screen/edit.html", **locals())
+        return render_template("screen/edit.html", config=config, **locals())
 
 @app.route("/screen/<int:sid>/clone", methods=["GET", "POST"])
 def dash_screen_clone(sid):
@@ -65,7 +65,7 @@ def dash_screen_clone(sid):
 
         return redirect("/screen/%s" %new_s.id)
     else:
-        return render_template("screen/clone.html", **locals())
+        return render_template("screen/clone.html", config=config, **locals())
 
 @app.route("/graph/<int:gid>/delete")
 def dash_graph_delete(gid):
@@ -90,7 +90,7 @@ def dash_screen(sid):
     if str(screen.pid) == '0':
         sub_screens = DashboardScreen.gets(pid=sid)
         sub_screens = sorted(sub_screens, key=lambda x:x.name)
-        return render_template("screen/top_screen.html", **locals())
+        return render_template("screen/top_screen.html", config=config, **locals())
 
     pscreen = DashboardScreen.get(screen.pid)
     sub_screens = DashboardScreen.gets(pid=screen.pid)
@@ -104,7 +104,7 @@ def dash_screen(sid):
 
     all_graphs = sorted(all_graphs, key=lambda x:x.position)
 
-    return render_template("screen/screen.html", **locals())
+    return render_template("screen/screen.html", config=config, **locals())
 
 @app.route("/screen/embed/<int:sid>")
 def dash_screen_embed(sid):
@@ -126,7 +126,7 @@ def dash_screen_embed(sid):
 
     all_graphs = sorted(all_graphs, key=lambda x:x.position)
 
-    return render_template("screen/screen_embed.html", **locals())
+    return render_template("screen/screen_embed.html", config=config, **locals())
 
 
 @app.route("/screen/add", methods=["GET", "POST"])
@@ -139,7 +139,7 @@ def dash_screen_add():
     else:
         pid = request.args.get("pid", '0')
         screen = DashboardScreen.get(pid)
-        return render_template("screen/add.html", **locals())
+        return render_template("screen/add.html", config=config, **locals())
 
 @app.route("/screen/<int:sid>/graph", methods=["GET", "POST"])
 def dash_graph_add(sid):
@@ -226,7 +226,7 @@ def dash_graph_edit(gid):
 
     else:
         ajax = request.args.get("ajax", "")
-        return render_template("screen/graph_edit.html", **locals())
+        return render_template("screen/graph_edit.html", config=config, **locals())
 
 @app.route("/graph/multi_edit", methods=["GET", "POST"])
 def dash_graph_multi_edit():
