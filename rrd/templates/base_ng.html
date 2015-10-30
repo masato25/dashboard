@@ -67,9 +67,9 @@
                         </li>
                         <!-- ngIf: systemSection -->
                         <!-- ngRepeat: item in mainLinks -->
-                        <li ng-repeat="item in mainLinks" class="ng-scope"><a href="http://grafana.owlemon.com" class="sidemenu-item"
-                            target=""><span class="icon-circle sidemenu-icon"><i class="fa fa-fw fa-th-large"></i></span> <span class="sidemenu-item-text ng-binding">Dashboards</span></a>
+                        <li ng-repeat="item in mainLinks" class="ng-scope"><a href="{{config.JSONCFG.shortcut.grafanaDashboard}}" class="sidemenu-item" target=""><span class="icon-circle sidemenu-icon"><i class="fa fa-fw fa-th-large"></i></span> <span class="sidemenu-item-text ng-binding">Dashboards</span></a>
                         </li>
+                    </ul>
                     </ul>
                     <!-- ngIf: !systemSection -->
                     <ul class="sidemenu sidemenu-small ng-scope" style="margin-top:101px" id="sidemenu-user" ng-if="!systemSection">
@@ -82,39 +82,39 @@
                             <ul class="dropdown-menu" role="menu" style="left: 65px">
                                 <!-- ngRepeat: menuItem in orgMenu -->
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope">
-                                    <a href="/me/profile" ng-if="menuItem.href" class="ng-binding ng-scope"> 
+                                <a href="{{config.JSONCFG.shortcut.falconUIC}}/me/profile" ng-if="menuItem.href" class="ng-binding ng-scope">
                                     <i class="fa fa-fw fa-cog" ng-if="menuItem.icon"></i>Settings</a>
                                 </li>
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope divider"> </li>
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope">
-                                    <a href="/me/teams" ng-if="menuItem.href" class="ng-binding ng-scope"> 
+                                <a href="{{config.JSONCFG.shortcut.falconUIC}}/me/teams" ng-if="menuItem.href" class="ng-binding ng-scope">
                                     <i class="fa fa-fw fa-users" ng-if="menuItem.icon"></i>Group</a>
                                 </li>
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope">
-                                    <a href="/me/users" ng-if="menuItem.href" class="ng-binding ng-scope"> 
+                                <a href="{{config.JSONCFG.shortcut.falconUIC}}/me/users" ng-if="menuItem.href" class="ng-binding ng-scope">
                                     <i class="fa fa-fw fa-book" ng-if="menuItem.icon"></i>Contacts</a>
                                 </li>
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope divider"> </li>
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope">
-                                    <a href="/auth/login" ng-if="menuItem.href" class="ng-binding ng-scope"> 
-                                    <i class="fa fa-fw fa-sign-in" ng-if="menuItem.icon"></i> Sign In</a>
+                                <a href="{{config.JSONCFG.shortcut.falconUIC}}/auth/login" ng-if="menuItem.href" class="ng-binding ng-scope">
+                                    <i class="fa fa-fw fa-sign-in" ng-if="menuItem.icon"></i>Sign In</a>
                                 </li>
                                 <li ng-repeat="menuItem in orgMenu" ng-class="menuItem.cssClass" class="ng-scope">
-                                    <a href="/me/logout" ng-if="menuItem.href" class="ng-binding ng-scope"> 
-                                    <i class="fa fa-fw fa-sign-out" ng-if="menuItem.icon"></i> Sign Out</a>
+                                <a href="{{config.JSONCFG.shortcut.falconUIC}}/me/logout" ng-if="menuItem.href" class="ng-binding ng-scope">
+                                    <i class="fa fa-fw fa-sign-out" ng-if="menuItem.icon"></i>Sign Out</a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="http://alert.owlemon.com" class="sidemenu-item pointer">
+                        <a href="{{config.JSONCFG.shortcut.falconAlarm}}" class="sidemenu-item pointer">
                                 <span class="icon-circle sidemenu-icon"><i class="fa fa-fw fa-exclamation-triangle"></i></span> <span class="sidemenu-item-text ng-binding">Alert</span></a>
                         </li>
                         <li>
-                            <a href="http://portal.owlemon.com" class="sidemenu-item pointer">
+                        <a href="{{config.JSONCFG.shortcut.falconPortal}}" class="sidemenu-item pointer">
                                 <span class="icon-circle sidemenu-icon"><i class="fa fa-fw fa-book"></i></span> <span class="sidemenu-item-text ng-binding">Scheme Portal</span></a>
                         </li>
                         <li>
-                            <a href="/" class="sidemenu-item pointer">
+                        <a href="{{config.JSONCFG.shortcut.falconDashboard}}" class="sidemenu-item pointer">
                                 <span class="icon-circle sidemenu-icon"><i class="fa fa-fw fa-line-chart"></i></span> <span class="sidemenu-item-text ng-binding">Falcon-DBoard</span></a>
                         </li>
                     </ul>
