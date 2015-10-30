@@ -25,21 +25,21 @@ from rrd import config
 *					 in rrd/view/index.py
 """
 def queryDB(sig):
-	rows = None
-	table = config.JSONCFG['database']['table']
-	print table
-	fields = 'id, expired'
-	# fields = '`id`, `expired`'
-	where = '`sig`="' + sig + '"'
-	sql = 'SELECT ' + fields + ' FROM `' + table + '`' + ' WHERE ' + where
-	try:
+    rows = None
+    table = config.JSONCFG['database']['table']
+    print table
+    fields = 'id, expired'
+    # fields = '`id`, `expired`'
+    where = '`sig`="' + sig + '"'
+    sql = 'SELECT ' + fields + ' FROM `' + table + '`' + ' WHERE ' + where
+    try: 
         mydb = MySQLdb.connect(
-        	host=config.JSONCFG['database']['host'],
-        	port=int(config.JSONCFG['database']['port']),
-        	user=config.JSONCFG['database']['account'],
-        	passwd=config.JSONCFG['database']['password'],
-        	db=config.JSONCFG['database']['db'],
-        	charset='utf8'
+            host=config.JSONCFG['database']['host'],
+            port=int(config.JSONCFG['database']['port']),
+            user=config.JSONCFG['database']['account'],
+            passwd=config.JSONCFG['database']['password'],
+            db=config.JSONCFG['database']['db'],
+            charset='utf8'
         )
         cursor = mydb.cursor()
         args = None
@@ -48,12 +48,12 @@ def queryDB(sig):
         mydb.commit()
         cursor.close()
         return rows
-	except:
-		print 'Unexpected error.'
-		mydb.rollback()
-		mydb.commit()
-		cursor.close()
-		return rows
+    except:
+        print 'Unexpected error.'
+        mydb.rollback()
+        mydb.commit()
+        cursor.close()
+        return rows
 
 @app.route("/")
 def index():
