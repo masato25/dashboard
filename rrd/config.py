@@ -29,12 +29,23 @@ QUERY_ADDR = "http://127.0.0.1:9966"
 BASE_DIR = "/home/work/open-falcon/dashboard/"
 LOG_PATH = os.path.join(BASE_DIR,"log/")
 
+JSONCFG = {}
+JSONCFG['database'] = {}
+JSONCFG['database']['host']     = '127.0.0.1'
+JSONCFG['database']['port']     = '3306'
+JSONCFG['database']['account']  = 'root'
+JSONCFG['database']['password'] = 'password'
+JSONCFG['database']['db']       = 'uic'
+JSONCFG['database']['table']    = 'session'
 
-JSONCFG = None
-path = os.path.dirname(os.path.realpath(__file__))
-configPath = path.replace('/rrd', '/cfg.json')
-with open(configPath) as config_file:
-	JSONCFG = json.load(config_file)
+JSONCFG['shortcut'] = {}
+JSONCFG['shortcut']['falconPortal']     = "http://127.0.0.1:5050"
+JSONCFG['shortcut']['falconDashboard']  = "http://127.0.0.1:8081"
+JSONCFG['shortcut']['grafanaDashboard'] = "http://127.0.0.1:3000"
+JSONCFG['shortcut']['falconAlarm']      = "http://127.0.0.1:9912"
+JSONCFG['shortcut']['falconUIC']        = "http://127.0.0.1:1234"
+
+JSONCFG['redirectUrl'] = 'UrlOfRedirectedLoginPage'
 
 try:
     from rrd.local_config import *
