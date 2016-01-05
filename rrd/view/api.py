@@ -20,6 +20,7 @@ def api_endpoints():
     raw_tag = request.args.get("tags") or ""
     tags = raw_tag and [x.strip() for x in raw_tag.split(",")] or []
     limit = int(request.args.get("limit") or 100)
+    regex_query = request.args.get("regex_query") or "0"
 
     if not q and not tags:
         ret["msg"] = "no query params given"
@@ -33,6 +34,8 @@ def api_endpoints():
     elif tags:
         endpoint_ids = TagEndpoint.get_endpoint_ids(tags, limit=limit) or []
         endpoints = Endpoint.gets(endpoint_ids)
+    elif regex_query == "1":
+        endpoints = Endpoint.search_regexp(q.split(), limit=limit)
     else:
         endpoints = Endpoint.search(q.split(), limit=limit)
 
