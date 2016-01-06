@@ -30,6 +30,24 @@ class Endpoint(object):
         return [cls(*row) for row in rows]
 
     @classmethod
+    def search_regexp(cls, qs, start=0, limit=100, deadline=0):
+        args = [deadline, ]
+        for q in qs:
+            args.append("^"+q)
+        args += [start, limit]
+
+        sql = '''select id, endpoint, ts from endpoint where ts > %s '''
+        for q in qs:
+            sql += ''' and endpoint regexp %s'''
+        sql += ''' limit %s,%s'''
+
+        cursor = db_conn.execute(sql, args)
+        rows = cursor.fetchall()
+        cursor and cursor.close()
+
+        return [cls(*row) for row in rows]
+
+    @classmethod
     def search_in_ids(cls, qs, ids, deadline=0):
         if not ids:
             return []
