@@ -11,20 +11,20 @@ from contextlib import closing
 """
 * @def name:        queryDB(config, sig)
 * @description:     This function returns query result of given SQL command.
-* @related issues:  OWL-117
+* @related issues:  OWL-265, OWL-117
 * @param:           list config
 * @param:           string sig
 * @return:          list rows
 * @author:          Don Hsieh
 * @since:           10/13/2015
-* @last modified:   10/14/2015
+* @last modified:   01/08/2016
 * @called by:       def index()
 *                    in rrd/view/index.py
 """
 def queryDB(sig):
     rows = None
     table = config.JSONCFG['database']['table']
-    fields = 'id, expired'
+    fields = 'expired'
     where = '`sig`="' + sig + '"'
     sql = 'SELECT ' + fields + ' FROM `' + table + '`' + ' WHERE ' + where
     mydb = MySQLdb.connect(
@@ -49,6 +49,8 @@ def queryDB(sig):
 app = Flask(__name__)
 app.config.from_object("rrd.config")
 
+API_PATHS = ['/api', '/chart']
+
 @app.errorhandler(Exception)
 def all_exception_handler(error):
     print "exception: %s" %error
@@ -57,36 +59,23 @@ def all_exception_handler(error):
 from view import api, chart, screen, index
 @app.before_request
 def before_request():
-    f = open('dashboard.log', 'a')
-    current_time = datetime.datetime.now()
-    f.write('\n' + 'current_time = ' + str(current_time) + '\n')
-    f.write('request.path = ' + request.path + '\n')
-    if '/api/' in request.path:
-        f.close()
-    else:
-        sig = request.cookies.get('sig')
-        f.write("sig = %s \n" %sig)
-        url = config.JSONCFG['redirectUrl']
-        if not sig:
-            f.close()
-            return redirect(url, code=302)
-        else:
-            rows = queryDB(sig)
-            if rows is None or len(rows) == 0:
-                f.close()
-                return redirect(url, code=302)
+    path = request.path
+    for api_path in API_PATHS:
+        if path.startswith(api_path):
+            return
 
-            f.write('rows = ' + str(rows) + '\n')
-            row = rows[0]
-            id = row[0]
-            expiredTime = row[1]
-            current_time = datetime.datetime.now()
+    sig = request.cookies.get('sig')
+    url = config.JSONCFG['redirectUrl']
+    if not sig:
+        return redirect(url, code=302)
 
-            now = int(time.time())
-            f.write('now = ' + str(now) + '\n')
-            f.write('expired time = ' + str(expiredTime) + '\n')
-            expired = now > expiredTime
-            f.write('expired = ' + str(expired) + '\n')
-            f.close()
-            if expired:
-                return redirect(url, code=302)
+    rows = queryDB(sig)
+    if rows is None or len(rows) == 0:
+        return redirect(url, code=302)
+
+    row = rows[0]
+    expiredTime = row[0]
+    now = int(time.time())
+    expired = now > expiredTime
+    if expired:
+        return redirect(url, code=302)
