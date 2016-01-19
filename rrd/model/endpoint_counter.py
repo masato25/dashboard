@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
 from rrd.store import graph_db_conn as db_conn
+import re
 
 class EndpointCounter(object):
     def __init__(self, id, endpoint_id, counter, step, type_):
@@ -22,13 +23,48 @@ class EndpointCounter(object):
         placeholder = ",".join(holders)
 
         args = endpoint_ids
-        for q in qs:
-            args.append("%"+q+"%")
-        args += [start, limit]
 
         sql = '''select id, endpoint_id, counter, step, type from endpoint_counter where endpoint_id in (''' +placeholder+ ''') '''
+        tags = {}
+
         for q in qs:
-            sql += ''' and counter like %s'''
+            matchObj = re.match('([^\0]+)=([^\0]+)', q)
+            if matchObj:
+                tags[matchObj.group(1)] = matchObj.group(2).split(',')
+            else:
+                args.append("%"+q+"%")
+                sql += ''' and counter like %s'''
+
+        if 'isp' in tags:
+            sql += ''' and ('''
+            for isp in tags['isp'][:-1]:
+                args.append("%"+isp+"%")
+                sql += ''' counter like %s or'''
+            args.append("%"+tags['isp'][-1]+"%")
+            sql += ''' counter like %s )'''
+        if 'province' in tags:
+            sql += ''' and ('''
+            for province in tags['province'][:-1]:
+                args.append("%"+province+"%")
+                sql += ''' counter like %s or'''
+            args.append("%"+tags['province'][-1]+"%")
+            sql += ''' counter like %s )'''
+        if 'city' in tags:
+            sql += ''' and ('''
+            for city in tags['city'][:-1]:
+                args.append("%"+city+"%")
+                sql += ''' counter like %s or'''
+            args.append("%"+tags['city'][-1]+"%")
+            sql += ''' counter like %s )'''
+        if 'tag' in tags:
+            sql += ''' and ('''
+            for tag in tags['tag'][:-1]:
+                args.append("%"+tag+"%")
+                sql += ''' counter like %s or'''
+            args.append("%"+tags['tag'][-1]+"%")
+            sql += ''' counter like %s )'''
+
+        args += [start, limit]
         sql += ''' limit %s,%s'''
 
         cursor = db_conn.execute(sql, args)
