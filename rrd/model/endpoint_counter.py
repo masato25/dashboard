@@ -14,6 +14,15 @@ class EndpointCounter(object):
         return "<EndpointCounter id=%s, endpoint_id=%s, counter=%s>" %(self.id, self.endpoint_id, self.counter)
     __str__ = __repr__
 
+    def tag_query(tags, args, tagname):
+        if tagname in tags:
+            sql += ''' and ('''
+            for t in tags[tagname][:-1]:
+                args.append("%"+t+"%")
+                sql += ''' counter like %s or'''
+            args.append("%"+tags[tagname][-1]+"%")
+            sql += ''' counter like %s )'''
+
     @classmethod
     def search_in_endpoint_ids(cls, qs, endpoint_ids, start=0, limit=100):
         if not endpoint_ids:
@@ -26,51 +35,31 @@ class EndpointCounter(object):
 
         sql = '''select id, endpoint_id, counter, step, type from endpoint_counter where endpoint_id in (''' +placeholder+ ''') '''
         tags = {}
-        isPacketLossRate = False
-        isAverage = False
+        is_packet_loss_rate = False
+        is_average = False
 
         for q in qs:
-            matchObj = re.match('([^\0]+)=([^\0]+)', q)
-            if matchObj:
-                tags[matchObj.group(1)] = matchObj.group(2).split(',')
+            match = re.match('([^\0]+)=([^\0]+)', q)
+            if match:
+                tags[match.group(1)] = match.group(2).split(',')
             else:
                 if "packet-loss-rate" in q:
                     q = "packets-sent"
-                    isPacketLossRate = True
-                if "average" in q:
+                    is_packet_loss_rate = True
+                elif "average" in q:
                     q = "transmission-time"
-                    isAverage = True
+                    is_average = True
                 args.append("%"+q+"%")
                 sql += ''' and counter like %s'''
 
         if 'isp' in tags:
-            sql += ''' and ('''
-            for isp in tags['isp'][:-1]:
-                args.append("%"+isp+"%")
-                sql += ''' counter like %s or'''
-            args.append("%"+tags['isp'][-1]+"%")
-            sql += ''' counter like %s )'''
+            sql += tag_query(tags, args, 'isp'):
         if 'province' in tags:
-            sql += ''' and ('''
-            for province in tags['province'][:-1]:
-                args.append("%"+province+"%")
-                sql += ''' counter like %s or'''
-            args.append("%"+tags['province'][-1]+"%")
-            sql += ''' counter like %s )'''
+            sql += tag_query(tags, args, 'isp'):
         if 'city' in tags:
-            sql += ''' and ('''
-            for city in tags['city'][:-1]:
-                args.append("%"+city+"%")
-                sql += ''' counter like %s or'''
-            args.append("%"+tags['city'][-1]+"%")
-            sql += ''' counter like %s )'''
+            sql += tag_query(tags, args, 'isp'):
         if 'tag' in tags:
-            sql += ''' and ('''
-            for tag in tags['tag'][:-1]:
-                args.append("%"+tag+"%")
-                sql += ''' counter like %s or'''
-            args.append("%"+tags['tag'][-1]+"%")
-            sql += ''' counter like %s )'''
+            sql += tag_query(tags, args, 'isp'):
 
         args += [start, limit]
         sql += ''' limit %s,%s'''
@@ -79,24 +68,16 @@ class EndpointCounter(object):
         rows = cursor.fetchall()
         cursor and cursor.close()
 
-        if isPacketLossRate:
+        if is_packet_loss_rate or is_average:
             rows = list(rows)
-            newLists = list()
-            newList = list(rows[0]) # 隨便找一個
-            newList[2] = 'packet-loss-rate'
-            newList = tuple(newList)
-            newLists.append(newList)
-            rows = rows + newLists
-            rows = tuple(rows)
-        elif isAverage:
-            rows = list(rows)
-            newLists = list()
-            newList = list(rows[0]) # 隨便找一個
-            newList[2] = 'average'
-            newList = tuple(newList)
-            newLists.append(newList)
-            rows = rows + newLists
-            rows = tuple(rows)
+            # clone the first one and then set the filed of NQM
+            row = list(rows[0]) 
+            if is_packet_loss_rate:
+                row[2] = 'packet-loss-rate'
+            elif is_average:
+                row[2] = 'average'
+            rows = (rows + [(row)])
+
         return [cls(*row) for row in rows]
 
     @classmethod
