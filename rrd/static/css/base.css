@@ -261,3 +261,9 @@ a.tab_current:hover {
     color:#ACABAB;
     font-size:11px;
 }
+
+/* index */
+.DBCSS-table-counter-name {
+    word-break: break-all;
+}
+
