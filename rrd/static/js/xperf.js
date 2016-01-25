@@ -94,8 +94,8 @@ function fn_list_counters(){
                         display_counter_type = "原始值";
                     }
                     var line_html = '<tr>'
-                    + '<td><input type="checkbox" class="input shiftCheckbox" data-fullkey="'+c[0]+'"></input></td>'
-                    + '<td><a href="javascript:void(0);" onclick="fn_show_chart(\'' + c[0] + '\')" >' + c[0] + '</a></td>'
+                    + '<td><input type="checkbox" data-fullkey="'+c[0]+'"></input></td>'
+                    + '<td><a class ="DBCSS-table-counter-name" href="javascript:void(0);" onclick="fn_show_chart(\'' + c[0] + '\')" >' + c[0] + '</a></td>'
                     + '<td>'+ display_counter_type +'</td>'
                     + '<td>'+ c[2] +'s</td>'
                     + '</tr>'
