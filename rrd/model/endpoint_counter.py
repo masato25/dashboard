@@ -26,12 +26,20 @@ class EndpointCounter(object):
 
         sql = '''select id, endpoint_id, counter, step, type from endpoint_counter where endpoint_id in (''' +placeholder+ ''') '''
         tags = {}
+        isPacketLossRate = False
+        isAverage = False
 
         for q in qs:
             matchObj = re.match('([^\0]+)=([^\0]+)', q)
             if matchObj:
                 tags[matchObj.group(1)] = matchObj.group(2).split(',')
             else:
+                if "packet-loss-rate" in q:
+                    q = "packets-sent"
+                    isPacketLossRate = True
+                if "average" in q:
+                    q = "transmission-time"
+                    isAverage = True
                 args.append("%"+q+"%")
                 sql += ''' and counter like %s'''
 
@@ -71,6 +79,31 @@ class EndpointCounter(object):
         rows = cursor.fetchall()
         cursor and cursor.close()
 
+        if isPacketLossRate:
+            rows = list(rows)
+            newLists = list()
+            #for row in rows:
+            #    newList = list(row)
+            #    newList[2] = 'packet-loss-rate'
+            #    newList = tuple(newList)
+            #    newLists.append(newList)
+            newList = list(rows[0]) # 隨便找一個
+            newList[2] = 'packet-loss-rate'
+            newList = tuple(newList)
+            newLists.append(newList)
+
+            rows = rows + newLists
+            rows = tuple(rows)
+        elif isAverage:
+            rows = list(rows)
+            newLists = list()
+            newList = list(rows[0]) # 隨便找一個
+            newList[2] = 'average'
+            newList = tuple(newList)
+            newLists.append(newList)
+
+            rows = rows + newLists
+            rows = tuple(rows)
         return [cls(*row) for row in rows]
 
     @classmethod
