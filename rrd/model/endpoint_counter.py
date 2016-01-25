@@ -82,16 +82,10 @@ class EndpointCounter(object):
         if isPacketLossRate:
             rows = list(rows)
             newLists = list()
-            #for row in rows:
-            #    newList = list(row)
-            #    newList[2] = 'packet-loss-rate'
-            #    newList = tuple(newList)
-            #    newLists.append(newList)
             newList = list(rows[0]) # 隨便找一個
             newList[2] = 'packet-loss-rate'
             newList = tuple(newList)
             newLists.append(newList)
-
             rows = rows + newLists
             rows = tuple(rows)
         elif isAverage:
@@ -101,7 +95,6 @@ class EndpointCounter(object):
             newList[2] = 'average'
             newList = tuple(newList)
             newLists.append(newList)
-
             rows = rows + newLists
             rows = tuple(rows)
         return [cls(*row) for row in rows]
