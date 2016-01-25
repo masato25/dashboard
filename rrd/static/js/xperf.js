@@ -3,7 +3,7 @@ function fn_list_endpoints()
     var group = $.trim($("input[name='hostgroup_search']").val());
     var qs = $.trim($("input[name='endpoint_search']").val());
     if (group.length > 0 && qs.length > 0) {
-        alert('Hostgroup 與 Endpoint 只能選一個');
+        alert('Hostgroup 與 Endpoint 只能擇一輸入');
     } else if (group.length > 0) {
         $(".loading").show();
         $.getJSON("/api/groups", {q: group}, function(ret){
