@@ -12,6 +12,13 @@
         $(function(){
             $("#check_all_endpoints").bind("click", fn_check_all_hosts);
             $("#check_all_counters").bind("click", fn_check_all_items);
+            $('#hostgroup-search').keydown(function(event) {
+                if(event.keyCode === 13) {
+                    fn_list_endpoints();
+                    event.preventDefault();
+                    return false;
+                }
+            });
             $("#endpoint-search").keydown(function(event){
                 if(event.keyCode == 13){
                     fn_list_endpoints();
