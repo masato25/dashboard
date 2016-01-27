@@ -12,6 +12,7 @@ def connect_db(host, port, user, password, db):
             db=db,
             use_unicode=True,
             charset="utf8")
+        conn.autocommit(True)
         return conn
     except Exception, e:
         print "Fatal: connect db fail:%s" % e
