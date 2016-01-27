@@ -13,6 +13,17 @@ class EndpointCounter(object):
         return "<EndpointCounter id=%s, endpoint_id=%s, counter=%s>" %(self.id, self.endpoint_id, self.counter)
     __str__ = __repr__
 
+    @staticmethod
+    def tag_query(tags, args, tagname):
+        if tagname in tags:
+            sql = ''' and ('''
+            for t in tags[tagname][:-1]:
+                args.append("%"+t+"%")
+                sql += ''' counter like %s or'''
+            args.append("%"+tags[tagname][-1]+"%")
+            sql += ''' counter like %s )'''
+        return sql
+
     @classmethod
     def search_in_endpoint_ids(cls, qs, endpoint_ids, start=0, limit=100):
         if not endpoint_ids:
@@ -28,7 +39,29 @@ class EndpointCounter(object):
 
         sql = '''select id, endpoint_id, counter, step, type from endpoint_counter where endpoint_id in (''' +placeholder+ ''') '''
         for q in qs:
-            sql += ''' and counter like %s'''
+            match = re.match('([^\0]+)=([^\0]+)', q)
+            if match:
+                tags[match.group(1)] = match.group(2).split(',')
+            else:
+                if "packet-loss-rate" in q:
+                    q = "packets-sent"
+                    is_packet_loss_rate = True
+                elif "average" in q:
+                    q = "transmission-time"
+                    is_average = True
+                args.append("%"+q+"%")
+                sql += ''' and counter like %s'''
+
+        if 'isp' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'isp')
+        if 'province' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'province')
+        if 'city' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'city')
+        if 'tag' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'tag')
+
+        args += [start, limit]
         sql += ''' limit %s,%s'''
 
         cursor = db_conn.execute(sql, args)
