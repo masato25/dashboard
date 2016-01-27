@@ -14,14 +14,16 @@ class EndpointCounter(object):
         return "<EndpointCounter id=%s, endpoint_id=%s, counter=%s>" %(self.id, self.endpoint_id, self.counter)
     __str__ = __repr__
 
+    @staticmethod
     def tag_query(tags, args, tagname):
         if tagname in tags:
-            sql += ''' and ('''
+            sql = ''' and ('''
             for t in tags[tagname][:-1]:
                 args.append("%"+t+"%")
                 sql += ''' counter like %s or'''
             args.append("%"+tags[tagname][-1]+"%")
             sql += ''' counter like %s )'''
+        return sql
 
     @classmethod
     def search_in_endpoint_ids(cls, qs, endpoint_ids, start=0, limit=100):
@@ -53,13 +55,13 @@ class EndpointCounter(object):
                 sql += ''' and counter like %s'''
 
         if 'isp' in tags:
-            sql += tag_query(tags, args, 'isp')
+            sql += EndpointCounter.tag_query(tags, args, 'isp')
         if 'province' in tags:
-            sql += tag_query(tags, args, 'province')
+            sql += EndpointCounter.tag_query(tags, args, 'province')
         if 'city' in tags:
-            sql += tag_query(tags, args, 'city')
+            sql += EndpointCounter.tag_query(tags, args, 'city')
         if 'tag' in tags:
-            sql += tag_query(tags, args, 'tag')
+            sql += EndpointCounter.tag_query(tags, args, 'tag')
 
         args += [start, limit]
         sql += ''' limit %s,%s'''
