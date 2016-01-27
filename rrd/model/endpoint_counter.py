@@ -55,11 +55,11 @@ class EndpointCounter(object):
         if 'isp' in tags:
             sql += tag_query(tags, args, 'isp')
         if 'province' in tags:
-            sql += tag_query(tags, args, 'isp')
+            sql += tag_query(tags, args, 'province')
         if 'city' in tags:
-            sql += tag_query(tags, args, 'isp')
+            sql += tag_query(tags, args, 'city')
         if 'tag' in tags:
-            sql += tag_query(tags, args, 'isp')
+            sql += tag_query(tags, args, 'tag')
 
         args += [start, limit]
         sql += ''' limit %s,%s'''
