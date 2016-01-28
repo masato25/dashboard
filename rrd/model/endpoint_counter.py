@@ -52,14 +52,20 @@ class EndpointCounter(object):
                 args.append("%"+q+"%")
                 sql += ''' and counter like %s'''
 
-        if 'isp' in tags:
-            sql += EndpointCounter.tag_query(tags, args, 'isp')
-        if 'province' in tags:
-            sql += EndpointCounter.tag_query(tags, args, 'province')
-        if 'city' in tags:
-            sql += EndpointCounter.tag_query(tags, args, 'city')
-        if 'tag' in tags:
-            sql += EndpointCounter.tag_query(tags, args, 'tag')
+        if 'nqm-agent-isp' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'nqm-agent-isp')
+        if 'nqm-agent-province' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'nqm-agent-province')
+        if 'nqm-agent-city' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'nqm-agent-city')
+        if 'target-isp' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'target-isp')
+        if 'target-province' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'target-province')
+        if 'target-city' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'target-city')
+        if 'target-name-tag' in tags:
+            sql += EndpointCounter.tag_query(tags, args, 'target-name-tag')
 
         args += [start, limit]
         sql += ''' limit %s,%s'''
