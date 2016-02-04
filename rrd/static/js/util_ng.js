@@ -53,7 +53,7 @@ function myFlot(FlotServ) {
         var legendContainer = $element.find('.legend');
         var data;
         var dataBak;
-        var configHandle = $scope.$watch('config', function(val) {
+        $scope.$watch('config', function(val) {
             if (val && val.length) {
                 // 这里的 数据需要排序, 貌似angular把这里的顺序弄乱了
                 data = FlotServ.sortData(val);
@@ -69,7 +69,6 @@ function myFlot(FlotServ) {
             }
             loadingIcon.hide();
             el.find('.loading').remove();
-            configHandle();
         });
 
         $element.parents().find('.reset-zoom').on('click', function(e) {
