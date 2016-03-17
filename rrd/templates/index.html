@@ -6,10 +6,14 @@
 {% block more_head %}
 {{super()}}
 
+<script src="/static/js/jquery.shiftcheckbox.js" type= "text/javascript" ></script>
 <script src="/static/js/xperf.js?_v=0.1.0"></script>
 <script>
 
         $(function(){
+            $(document).ready (function() {
+                $('.shiftCheckbox').shiftcheckbox();
+            });
             $("#check_all_endpoints").bind("click", fn_check_all_hosts);
             $("#check_all_counters").bind("click", fn_check_all_items);
             $('#hostgroup-search').keydown(function(event) {
@@ -96,7 +100,7 @@
                             </form>
                             <form class="form-inline" role="form">
                                 <div class="form-group">
-                                    <button type="button" id="btn-search-endpoints" class="btn btn-default btn-sm" onclick="fn_list_endpoints();return false;">全局搜索</button>
+                                    <button type="button" id="btn-search-endpoints" class="btn btn-default btn-sm btn-success" onclick="fn_list_endpoints();return false;">全局搜索</button>
                                     <select class="form-control input-sm" id="endpoint-limit" onchange="fn_list_endpoints();return false;">
                                         <option value="50"> Limit 50</option>
                                         <option value="100">Limit 100</option>
@@ -108,7 +112,7 @@
                             <form class="form-inline" role="form">
                                 <div class="form-group">
                                     <input id="endpoint-filter" type="text" class="form-control input-sm">
-                                    <button class="btn btn-default btn-sm" onclick="filter_endpoint();return false;">快速过滤</button>
+                                    <button class="btn btn-default btn-sm btn-info" onclick="filter_endpoint();return false;">快速过滤</button>
                                 </div>
                             </form>
 
@@ -150,7 +154,7 @@
                             </form>
 
                             <form class="form-inline" role="form">
-                                <button class="btn btn-default btn-sm" onclick="fn_list_counters();return false;">搜索</button>
+                                <button class="btn btn-default btn-sm btn-success" onclick="fn_list_counters();return false;">搜索</button>
                                 <div class="form-group">
                                     <select class="form-control input-sm" id="counter-limit" onchange="fn_list_counters();return false;">
                                         <option value="50"> Limit 50</option>
@@ -160,7 +164,7 @@
                                 </div>
                                 <div class="form-group">
                                     <input id="counter-filter" type="text" class="form-control input-sm">
-                                    <button class="btn btn-default btn-sm" onclick="filter_counter();return false;">快速过滤</button>
+                                    <button class="btn btn-default btn-sm btn-info" onclick="filter_counter();return false;">快速过滤</button>
                                 </div>
 
                                 <div class="dropdown form-group pull-right">

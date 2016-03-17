@@ -100,6 +100,7 @@ function fn_list_counters(){
                     + '<td>'+ c[2] +'s</td>'
                     + '</tr>'
                     tbody_items.append($(line_html));
+                    tbody_items.find('.shiftCheckbox').shiftcheckbox();
                 }
             }else{
                 alert("搜索失败：" + ret.msg);
