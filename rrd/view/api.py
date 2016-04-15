@@ -14,11 +14,17 @@ from rrd.model.tag_endpoint import TagEndpoint
 
 @app.route("/api/health")
 def health_check():
-    db_con._conn.cursor()
     resp = {
         "status": "ok",
         "msg": "system work well"
     }
+    if str(db_con._conn) == "None":
+	#reconnect again
+	db_con.connect()
+	if str(db_con._conn) == "None":
+		resp = {"status": "failed",
+			"msg": "dashboard got problem now, please contact system administrator"
+		       }
     return json.dumps(resp)
 
 """
