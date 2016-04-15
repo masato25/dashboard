@@ -11,6 +11,15 @@ from rrd.model.group_host import GroupHost
 from rrd.model.host import Host
 from rrd.model.tag_endpoint import TagEndpoint
 
+
+@app.route("/api/health")
+def health_check():
+    resp = {
+        "status": "ok",
+        "msg": "system work well"
+    }
+    return json.dumps(resp)
+
 """
 * @def name:        api_groups()
 * @description:     This function returns hostgroup names filtered by keywords.
