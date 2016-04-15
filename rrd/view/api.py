@@ -2,7 +2,7 @@
 import json
 from flask import request, abort, g
 from rrd import app
-
+from rrd.store import dashboard_db_conn as db_con
 from rrd.model.endpoint import Endpoint
 from rrd.model.endpoint_counter import EndpointCounter
 from rrd.model.graph import TmpGraph
@@ -14,6 +14,7 @@ from rrd.model.tag_endpoint import TagEndpoint
 
 @app.route("/api/health")
 def health_check():
+    db_con._conn.cursor()
     resp = {
         "status": "ok",
         "msg": "system work well"
