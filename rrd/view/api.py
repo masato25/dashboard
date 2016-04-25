@@ -112,6 +112,7 @@ def api_get_counters():
     q = request.form.get("q") or ""
     limit = int(request.form.get("limit") or 100)
 
+    nethelp = request.form.get("nethelp") or ""
     if not (endpoints or q):
         ret['msg'] = "no endpoints or counter given"
         return json.dumps(ret)
@@ -134,7 +135,9 @@ def api_get_counters():
             return json.dumps(ret)
 
     qs = q.split()
-    if len(group_ids) > 0:
+    if nethelp == "true":
+        ecs = EndpointCounter.search_in_endpoint_ids(qs, endpoint_ids, limit=100)
+    elif len(group_ids) > 0:
         limit = 5000
     if len(qs) > 0:
         ecs = EndpointCounter.search_in_endpoint_ids(qs, endpoint_ids, limit=limit)
