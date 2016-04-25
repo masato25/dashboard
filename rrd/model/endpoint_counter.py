@@ -40,6 +40,7 @@ class EndpointCounter(object):
         is_packet_loss_rate = False
         is_average = False
 
+	sql_sub = []
         for q in qs:
             match = re.match('([^\0]+)=([^\0]+)', q)
             if match:
@@ -52,7 +53,10 @@ class EndpointCounter(object):
                     q = "transmission-time"
                     is_average = True
                 args.append("%"+q+"%")
-                sql += ''' and counter like %s'''
+		sql_sub.append(''' counter like %s ''')
+
+	if len(sql_sub) != 0:
+	    sql += " AND (" + " OR ".join(sql_sub) + ") "
 
         if 'nqm-agent-isp' in tags:
             sql += EndpointCounter.tag_query(tags, args, 'nqm-agent-isp')
@@ -71,7 +75,6 @@ class EndpointCounter(object):
 
         args += [start, limit]
         sql += ''' limit %s,%s'''
-
         cursor = db_conn.execute(sql, args)
         rows = cursor.fetchall()
         cursor and cursor.close()

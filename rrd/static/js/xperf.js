@@ -60,8 +60,11 @@ function fn_list_endpoints()
     }
 }
 
-function fn_list_counters(){
+function fn_list_counters(nethelp){
     var qs = $.trim($("#counter-search").val());
+    if(nethelp){
+        qs = "net.if.in net.if.out";
+    }
     var hosts = new Array();
     $("#tbody-endpoints input:checked").each(function(i, o){
         var name = $(o).attr("data-fullname");
@@ -71,14 +74,14 @@ function fn_list_counters(){
         alert("先选定一些endpoints");
         return false;
     }
-
     var limit = $("#counter-limit").val();
+    $("#check_all_counters").attr('checked', false);
     $(".loading").show();
     $.ajax({
         method: "POST",
         url: "/api/counters",
         dataType: "json",
-        data: {"endpoints": JSON.stringify(hosts), "q": qs, "limit": limit, "_r": Math.random()},
+        data: {"endpoints": JSON.stringify(hosts), "q": qs, "limit": limit, "_r": Math.random(), nethelp: nethelp},
         success:function(ret){
             $(".loading").hide();
             if(ret.ok){
