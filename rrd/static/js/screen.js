@@ -41,6 +41,12 @@ $(function() {
 
     // 画图
     active();
+
+    // auto update chart data every 30 sec
+    setInterval(function(){
+      active();
+    }, 30000);
+
     window.active = active;
     window.getData = getData;
 

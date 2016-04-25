@@ -60,8 +60,11 @@ function fn_list_endpoints()
     }
 }
 
-function fn_list_counters(){
+function fn_list_counters(nethelp){
     var qs = $.trim($("#counter-search").val());
+    if(nethelp){
+        qs = "net.if.in net.if.out";
+    }
     var hosts = new Array();
     $("#tbody-endpoints input:checked").each(function(i, o){
         var name = $(o).attr("data-fullname");
@@ -71,14 +74,14 @@ function fn_list_counters(){
         alert("先选定一些endpoints");
         return false;
     }
-
     var limit = $("#counter-limit").val();
+    $("#check_all_counters").attr('checked', false);
     $(".loading").show();
     $.ajax({
         method: "POST",
         url: "/api/counters",
         dataType: "json",
-        data: {"endpoints": JSON.stringify(hosts), "q": qs, "limit": limit, "_r": Math.random()},
+        data: {"endpoints": JSON.stringify(hosts), "q": qs, "limit": limit, "_r": Math.random(), nethelp: nethelp},
         success:function(ret){
             $(".loading").hide();
             if(ret.ok){
@@ -94,13 +97,23 @@ function fn_list_counters(){
                         display_counter_type = "原始值";
                     }
                     var line_html = '<tr>'
-                    + '<td><input type="checkbox" data-fullkey="'+c[0]+'"></input></td>'
+                    + '<td><input type="checkbox" data-fullkey="' + c[0] + '" class="' + c[0] + '"></input></td>'
                     + '<td><a class ="DBCSS-table-counter-name" href="javascript:void(0);" onclick="fn_show_chart(\'' + c[0] + '\')" >' + c[0] + '</a></td>'
                     + '<td>'+ display_counter_type +'</td>'
                     + '<td>'+ c[2] +'s</td>'
                     + '</tr>'
                     tbody_items.append($(line_html));
                     tbody_items.find('.shiftCheckbox').shiftcheckbox();
+                }
+                if(nethelp){
+		    $('input').each(function() {
+			classname = $(this).attr("class");
+			if(classname){
+			    if(classname.indexOf("eth_all") > 0){
+				$(this).attr('checked', true)
+			    }
+			}
+		    })
                 }
             }else{
                 alert("搜索失败：" + ret.msg);
