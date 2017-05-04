@@ -5,7 +5,7 @@ from flask import g, redirect, session, abort, request
 
 from functools import wraps
 
-from rrd import config 
+from rrd import config
 from rrd import corelib
 from rrd.utils import randbytes
 from rrd.model.user import User, UserToken
@@ -68,7 +68,7 @@ def get_usertoken_from_session(session_):
 
 def get_current_user_profile(user_token):
     if not user_token:
-        return 
+        return
 
     h = {"Content-type": "application/json"}
     r = corelib.auth_requests("GET", "%s/user/current" %config.API_ADDR, headers=h)
@@ -76,11 +76,13 @@ def get_current_user_profile(user_token):
         return
 
     j = r.json()
+    if type(j) is dict:
+        j = j.get("data", j)
     return User(j["id"], j["name"], j["cnname"], j["email"], j["phone"], j["im"], j["qq"], j["role"])
 
 def logout_user(user_token):
     if not user_token:
-        return 
+        return
 
     r = corelib.auth_requests("GET", "%s/user/logout" %config.API_ADDR)
     if r.status_code != 200:
@@ -97,6 +99,8 @@ def login_user(name, password):
         raise Exception("{} : {}".format(r.status_code, r.text))
 
     j = r.json()
+    if type(j) is dict:
+        j = j.get("data", j)
     ut = UserToken(j["name"], j["sig"])
     set_user_cookie(ut, session)
     return ut
@@ -148,7 +152,7 @@ def ldap_login_user(name, password):
             phone = d['telephoneNumber'] and d['telephoneNumber'][0] or ""
         else:
             phone = ""
-    
+
         return {
                 "name": name,
                 "password": password,

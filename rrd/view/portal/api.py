@@ -98,7 +98,7 @@ def api_strategy_get(s_id):
     if not s:
         return jsonify(msg="no such strategy")
     return jsonify(msg='', data=s.to_json())
-    
+
 
 @app.route('/api/metric/query')
 def api_metric_query():
@@ -109,10 +109,12 @@ def api_metric_query():
     r = corelib.auth_requests("GET", "%s/metric/default_list" \
             %(config.API_ADDR,), headers=h)
     if r.status_code != 200:
-        log.error("%s:%s" %(r.status_code, r.text))       
+        log.error("%s:%s" %(r.status_code, r.text))
         return []
-
-    metrics = r.json() or []
+    j = r.json() or []
+    if type(j) is dict:
+        j = j.get("data", j)
+    metrics = j
     metrics = [q,] + metrics
 
     return jsonify(data=[{'name': name} for name in metrics])
@@ -141,4 +143,3 @@ def api_group_hosts_json(grp_name):
     vs, _ = Host.query(1, 10000000, '', '0', group.id)
     names = [v.hostname for v in vs]
     return jsonify(msg='', data=names)
-

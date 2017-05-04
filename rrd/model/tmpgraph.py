@@ -23,6 +23,8 @@ class TmpGraph(object):
             raise Exception(r.text)
 
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
         return j and cls(*[id, j["endpoints"], j["counters"]])
 
 
@@ -38,5 +40,6 @@ class TmpGraph(object):
             raise Exception(r.text)
 
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
         return j and j.get('id')
-

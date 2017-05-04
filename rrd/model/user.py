@@ -10,7 +10,7 @@ class UserToken(object):
     def __init__(self, name, sig):
         self.name = name
         self.sig = sig
-    
+
     def __repr__(self):
         return "<UserToken name=%s, sig=%s>"  % (self.name, self.sig)
     __str__ = __repr__
@@ -54,11 +54,13 @@ class User(object):
             return False
 
         r = corelib.auth_requests("GET", '%s/user/u/%s/in_teams?team_names=%s' \
-                % (config.API_ADDR, self.id, ','.join(groups))) 
+                % (config.API_ADDR, self.id, ','.join(groups)))
         log.debug("%s:%s" %(r.status_code, r.text))
         if r.status_code != 200:
             return False
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
         return j["message"] == "true"
 
     @classmethod
@@ -70,6 +72,8 @@ class User(object):
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
         return j and cls(j['id'], j['name'], j['cnname'], j['email'], j['phone'], j['im'], j['qq'], j['role'])
 
     @classmethod
@@ -81,6 +85,8 @@ class User(object):
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
         return j and cls(j['id'], j['name'], j['cnname'], j['email'], j['phone'], j['im'], j['qq'], j['role'])
 
     @classmethod
@@ -93,7 +99,7 @@ class User(object):
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
         return r.text
-            
+
     @classmethod
     def change_user_passwd(cls, old_password, new_password):
         h = {"Content-type":"application/json"}
@@ -131,6 +137,8 @@ class User(object):
             raise Exception("%s %s" %(r.status_code, r.text))
 
         j = r.json() or []
+        if type(j) is dict:
+            j = j.get("data", j)
         for x in j:
             u = cls(x["id"], x["name"], x["cnname"], x["email"], x["phone"], x["im"], x["qq"], x["role"])
             users.append(u)
@@ -150,7 +158,10 @@ class User(object):
 
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
-        return r.json()
+        j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
+        return j
 
     @classmethod
     def admin_update_user_profile(cls, data={}):
@@ -189,7 +200,7 @@ class User(object):
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
         return r.text
-    
+
     @classmethod
     def admin_delete_user(cls, user_id):
         h = {"Content-type":"application/json"}

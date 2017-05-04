@@ -17,7 +17,10 @@ def graph_history(endpoints, counters, cf, start, end):
     if r.status_code != 200:
         raise Exception("{} : {}".format(r.status_code, r.text))
 
-    return r.json()
+    j = r.json()
+    if type(j) is dict:
+        j = j.get("data", j)
+    return j
 
 def merge_list(a, b):
     sum = []

@@ -39,7 +39,10 @@ class Team(object):
 
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
-        return r.json()
+        j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
+        return j
 
     @classmethod
     def get_team_users_by_name(cls, team_name):
@@ -50,7 +53,10 @@ class Team(object):
 
         if r.status_code != 200:
             raise Exception("%s %s" %(r.status_code, r.text))
-        return r.json()
+        j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
+        return j
 
     @classmethod
     def get_teams(cls, query_term, limit=20, page=1):
@@ -71,7 +77,10 @@ class Team(object):
             raise Exception("%s %s" %(r.status_code, r.text))
 
         teams = []
-        for j in r.json():
+        js = r.json() or []
+        if type(js) is dict:
+            js = js.get("data", js)
+        for j in js:
             users = [User(x["id"], x["name"], x["cnname"], x["email"], x["phone"], x["im"], x["qq"], x["role"]) for x in j['users']]
             t = Team(j["team"]["id"], j["team"]["name"], j["team"]["resume"], j["team"]["creator"], j['creator_name'], users)
             teams.append(t)

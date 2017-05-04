@@ -28,6 +28,8 @@ class DashboardGraph(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json()
+        if type([]) is dict:
+            j = j.get("data", j)
         return [cls(*[x["graph_id"], x["title"], x["endpoints"], x["counters"], \
                 x["screen_id"], x["timespan"], x["graph_type"], x["method"], x["position"]]) for x in j]
 
@@ -38,6 +40,8 @@ class DashboardGraph(object):
         if r.status_code != 200:
             raise Exception(r.text)
         x = r.json()
+        if type(x) is dict:
+            x = x.get("data", x)
         return x and cls(*[x["graph_id"], x["title"], x["endpoints"], x["counters"], \
                 x["screen_id"], x["timespan"], x["graph_type"], x["method"], x["position"]])
 
@@ -61,7 +65,8 @@ class DashboardGraph(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json()
-
+        if type(j) is dict:
+            j = j.get("data", j)
         graph_id = j and j.get("id")
         return graph_id and cls.get(graph_id)
 
@@ -71,7 +76,10 @@ class DashboardGraph(object):
         r = corelib.auth_requests("DELETE", API_ADDR + "/dashboard/graph/%s" %(id,), headers=h)
         if r.status_code != 200:
             raise Exception(r.text)
-        return r.json()
+        j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
+        return j
 
     def update(self, title=None, hosts=None, counters=None, screen_id=None,
             timespan=None, graph_type=None, method=None, position=None):
@@ -84,7 +92,7 @@ class DashboardGraph(object):
         graph_type = graph_type or self.graph_type
         method = method if method is not None else self.method
         position = position or self.position
-    
+
         d = {
             "screen_id": int(screen_id),
             "title": title,
@@ -101,7 +109,8 @@ class DashboardGraph(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json()
-
+        if type(j) is dict:
+            j = j.get("data", j)
         graph_id = j and j.get("id")
         return graph_id and DashboardGraph.get(graph_id)
 
@@ -113,4 +122,3 @@ class DashboardGraph(object):
             counters = x["counters"] or []
             grh = cls.get(id)
             grh and grh.update(hosts=hosts, counters=counters)
-        

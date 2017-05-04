@@ -28,8 +28,10 @@ def api_endpoints():
     r = corelib.auth_requests("GET", config.API_ADDR + "/graph/endpoint?q=%s&limit=%d&tags=%s" %(q, limit, tags), headers=h)
     if r.status_code != 200:
         abort(400, r.text)
-
-    j = sorted(r.json(), key=lambda x:x["endpoint"])
+    jt = r.json()
+    if type(jt) is dict:
+        jt = jt.get("data", jt)
+    j = sorted(jt, key=lambda x:x["endpoint"])
     endpoints = [x["endpoint"] for x in j]
 
     ret['data'] = j
@@ -60,7 +62,8 @@ def api_get_counters():
     if r.status_code != 200:
         abort(400, r.text)
     j = r.json()
-
+    if type(j) is dict:
+        j = j.get("data", j)
     counters_map = {}
     for x in j:
         counters_map[x['counter']] = [x['counter'], x['type'], x['step']]
@@ -95,7 +98,8 @@ def api_delete_counters():
     if r.status_code != 200:
         abort(r.status_code, r.text)
     j = r.json()
-
+    if type(j) is dict:
+        j = j.get("data", j)
     ret["ok"] = True
     ret["data"] = "%s counters affected" %j.get("affected_counter")
     return json.dumps(ret)
@@ -120,7 +124,8 @@ def api_delete_endpoints():
     if r.status_code != 200:
         abort(r.status_code, r.text)
     j = r.json()
-
+    if type(j) is dict:
+        j = j.get("data", j)
     ret["ok"] = True
     ret["data"] = "%s counters affected, %s endpoints affected" %(j.get("affected_counter"), j.get("affected_endpoint"))
     return json.dumps(ret)

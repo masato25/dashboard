@@ -19,6 +19,8 @@ class DashboardScreen(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", [])
         if j:
             row = [j["id"], j["pid"], j["name"]]
             return cls(*row)
@@ -29,6 +31,8 @@ class DashboardScreen(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json() or []
+        if type(j) is dict:
+            j = j.get("data", j)
         return [cls(*[x["id"], x["pid"], x["name"]]) for x in j]
 
     @classmethod
@@ -37,6 +41,8 @@ class DashboardScreen(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json() or []
+        if type(j) is dict:
+            j = j.get("data", j)
         return [cls(*[x["id"], x["pid"], x["name"]]) for x in j]
 
     @classmethod
@@ -46,6 +52,8 @@ class DashboardScreen(object):
         if r.status_code != 200:
             raise Exception(r.text)
         j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
         return cls(*[j["id"], j["pid"], j["name"]])
 
     @classmethod
@@ -54,7 +62,10 @@ class DashboardScreen(object):
         r = corelib.auth_requests("DELETE", API_ADDR + "/dashboard/screen/%s" %(id,), headers=h)
         if r.status_code != 200:
             raise Exception(r.text)
-        return r.json()
+        j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
+        return j
 
     def update(self, pid=None, name=None):
         d = {}
@@ -66,4 +77,7 @@ class DashboardScreen(object):
         r = corelib.auth_requests("PUT", API_ADDR + "/dashboard/screen/%s" %self.id, data = d)
         if r.status_code != 200:
             raise Exception(r.text)
-        return r.json()
+        j = r.json()
+        if type(j) is dict:
+            j = j.get("data", j)
+        return j
